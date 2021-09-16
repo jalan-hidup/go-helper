@@ -6,6 +6,7 @@ type requestUser struct {
 	Email       string `json:"email,omitempty"`
 	PhoneNumber string `json:"phoneNumber,omitempty"`
 	Roles       string `json:"roles,omitempty"`
+	Coaching    bool   `json:"coaching,omitempty"`
 	AuthTime    int64  `json:"authTime,omitempty"`
 	Exp         int64  `json:"exp,omitempty"`
 	Iat         int64  `json:"iat,omitempty"`
