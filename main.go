@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
+	"github.com/go-playground/validator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -57,4 +59,26 @@ func ValidateUserRoles(ctx *context.Context, roles ...string) (*requestUser, err
 		return &user, status.Error(codes.PermissionDenied, "permission denied")
 	}
 	return &user, nil
+}
+func ValidateStruct(validate *validator.Validate, data interface{}) error {
+	err := validate.Struct(data)
+	if err == nil {
+		return nil
+	}
+	var errName []string
+	for _, e := range err.(validator.ValidationErrors) {
+		errName = append(errName, e.Field())
+	}
+	var message = ""
+	var sizeError = len(errName)
+	if sizeError == 0 {
+		message = ""
+	} else if sizeError == 1 {
+		message = errName[0]
+	} else if sizeError == 2 {
+		message = errName[0] + " & " + errName[1]
+	} else {
+		message = strings.Join(errName[0:sizeError-1], ", ") + " & " + errName[sizeError-1]
+	}
+	return fmt.Errorf("%s. tidak valid", message)
 }
